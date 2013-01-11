@@ -18,6 +18,8 @@
     self = [super init];
     return self;
 
+#else
+    return nil;
 #endif
 }
 

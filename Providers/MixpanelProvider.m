@@ -20,18 +20,18 @@
 }
 
 - (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email {
-    [[[Mixpanel sharedInstance] people] identify:id];
+    [[(Mixpanel *)[Mixpanel sharedInstance] people] identify:id];
     if (email) {
-        [[[Mixpanel sharedInstance] people] set:@"$email" to:email];
+        [[(Mixpanel *)[Mixpanel sharedInstance] people] set:@"$email" to:email];
     }
 }
 
 - (void)setUserProperty:(NSString *)property toValue:(NSString *)value {
-    [[[Mixpanel sharedInstance] people] set:property to:value];
+    [[(Mixpanel *)[Mixpanel sharedInstance] people] set:property to:value];
 }
 
 - (void)incrementUserProperty:(NSString *)counterName byInt:(NSNumber *)amount {
-    [[[Mixpanel sharedInstance] people] increment:counterName by:amount];
+    [[(Mixpanel *)[Mixpanel sharedInstance] people] increment:counterName by:amount];
 }
 
 - (void)event:(NSString *)event withProperties:(NSDictionary *)properties {
