@@ -7,7 +7,6 @@
 //
 
 #import "ARAnalytics.h"
-#import "ARAnalytics+GeneratedHeader.h"
 #import "ARAnalyticalProvider.h"
 #import "ARAnalyticsProviders.h"
 
@@ -31,116 +30,152 @@ static ARAnalytics *_sharedAnalytics;
 #pragma mark -
 #pragma mark Analytics Setup
 
+// By using the constants at the bottom you can 
+
 + (void)setupWithAnalytics:(NSDictionary *)analyticsDictionary {
-#ifdef AR_TESTFLIGHT_EXISTS
     if (analyticsDictionary[ARTestFlightAppToken]) {
         [self setupTestFlightWithAppToken:analyticsDictionary[ARTestFlightAppToken]];
     }
-#endif
 
-#ifdef AR_FLURRY_EXISTS
     if (analyticsDictionary[ARFlurryAPIKey]) {
         [self setupFlurryWithAPIKey:analyticsDictionary[ARFlurryAPIKey]];
     }
-#endif
 
-#ifdef AR_GOOGLEANALYTICS_EXISTS
     if (analyticsDictionary[ARGoogleAnalyticsID]) {
         [self setupGoogleAnalyticsWithID:analyticsDictionary[ARGoogleAnalyticsID]];
     }
-#endif
 
-#ifdef AR_KISSMETRICS_EXISTS
     if (analyticsDictionary[ARKISSMetricsAPIKey]) {
         [self setupKISSMetricsWithAPIKey:analyticsDictionary[ARKISSMetricsAPIKey]];
     }
-#endif
 
-#ifdef AR_LOCALYTICS_EXISTS
     if (analyticsDictionary[ARLocalyticsAppKey]) {
         [self setupLocalyticsWithAppKey:analyticsDictionary[ARLocalyticsAppKey]];
     }
-#endif
 
-#ifdef AR_MIXPANEL_EXISTS
     if (analyticsDictionary[ARMixpanelToken]) {
-        [self setupMixpanelWithToken:analyticsDictionary[ARMixpanelToken]];
+        // ARMixpanelHost is nil if you want the default provider. So we can make
+        // the presumption of it here.
+        [self setupMixpanelWithToken:analyticsDictionary[ARMixpanelToken] andHost:analyticsDictionary[ARMixpanelHost]];
     }
-#endif
 
-#ifdef AR_COUNTLY_EXISTS
     if (analyticsDictionary[ARCountlyAppKey] && analyticsDictionary[ARCountlyHost]) {
         [self setupCountlyWithAppKey:analyticsDictionary[ARCountlyAppKey] andHost:analyticsDictionary[ARCountlyHost]];
     }
-#endif
+
+    if (analyticsDictionary[ARBugsnagAPIKey]) {
+        [self setupBugsnagWithAPIKey:analyticsDictionary[ARBugsnagAPIKey]];
+    }
+    
+    if (analyticsDictionary[ARHelpshiftAppID] && analyticsDictionary[ARHelpshiftDomainName] && analyticsDictionary[ARHelpshiftAPIKey]) {
+        [self setupHelpshiftWithAppID:analyticsDictionary[ARHelpshiftAppID] domainName:analyticsDictionary[ARHelpshiftDomainName] apiKey:analyticsDictionary[ARHelpshiftAPIKey]];
+    }
 
     // Crashlytics / Crittercism should stay at the bottom of this,
     // as they both need to register exceptions, and you'd only use one.
 
-#ifdef AR_CRASHLYTICS_EXISTS
     if (analyticsDictionary[ARCrashlyticsAPIKey]) {
         [self setupCrashlyticsWithAPIKey:analyticsDictionary[ARCrashlyticsAPIKey]];
     }
-#endif
 
-#ifdef AR_CRITTERCISM_EXISTS
     if (analyticsDictionary[ARCrittercismAppID]) {
         [self setupCrittercismWithAppID:analyticsDictionary[ARCrittercismAppID]];
     }
-#endif
 }
 
 + (void)setupTestFlightWithAppToken:(NSString *)token {
+#ifdef AR_TESTFLIGHT_EXISTS
     TestFlightProvider *provider = [[TestFlightProvider alloc] initWithIdentifier:token];
     _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
 }
 
 + (void)setupCrashlyticsWithAPIKey:(NSString *)key {
+#ifdef AR_CRASHLYTICS_EXISTS
     CrashlyticsProvider *provider = [[CrashlyticsProvider alloc] initWithIdentifier:key];
     _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
 }
 
 + (void)setupMixpanelWithToken:(NSString *)token {
-    MixpanelProvider *provider = [[MixpanelProvider alloc] initWithIdentifier:token];
+    [self setupMixpanelWithToken:token andHost:nil];
+}
+
++ (void)setupMixpanelWithToken:(NSString *)token andHost:(NSString *)host {
+#ifdef AR_MIXPANEL_EXISTS
+    MixpanelProvider *provider = [[MixpanelProvider alloc] initWithIdentifier:token andHost:host];
     _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
 }
 
 + (void)setupFlurryWithAPIKey:(NSString *)key {
+#ifdef AR_FLURRY_EXISTS
     FlurryProvider *provider = [[FlurryProvider alloc] initWithIdentifier:key];
     _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
 }
 
-+ (void)setupGoogleAnalyticsWithID:(NSString *)id {
-    GoogleProvider *provider = [[GoogleProvider alloc] initWithIdentifier:id];
++ (void)setupGoogleAnalyticsWithID:(NSString *)identifier {
+#ifdef AR_GOOGLEANALYTICS_EXISTS
+    GoogleAnalyticsProvider *provider = [[GoogleAnalyticsProvider alloc] initWithIdentifier:identifier];
     _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
 }
 
 + (void)setupLocalyticsWithAppKey:(NSString *)key {
+#ifdef AR_LOCALYTICS_EXISTS
     LocalyticsProvider *provider = [[LocalyticsProvider alloc] initWithIdentifier:key];
-    _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];}
+    _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
+}
 
 + (void)setupKISSMetricsWithAPIKey:(NSString *)key {
+#ifdef AR_KISSMETRICS_EXISTS
     KISSMetricsProvider *provider = [[KISSMetricsProvider alloc] initWithIdentifier:key];
     _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
 }
 
 + (void)setupCrittercismWithAppID:(NSString *)appID {
+#ifdef AR_CRITTERCISM_EXISTS
     CrittercismProvider *provider = [[CrittercismProvider alloc] initWithIdentifier:appID];
     _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
 }
 
 + (void)setupCountlyWithAppKey:(NSString *)key andHost:(NSString *)host {
+#ifdef AR_COUNTLY_EXISTS
     CountlyProvider *provider = [[CountlyProvider alloc] initWithAppKey:key andHost:host];
     _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
+}
+
++ (void)setupBugsnagWithAPIKey:(NSString *)key {
+#ifdef AR_BUGSNAG_EXISTS
+    BugsnagProvider *provider = [[BugsnagProvider alloc] initWithIdentifier:key];
+    _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
+}
+
++ (void)setupHelpshiftWithAppID:(NSString *)appID domainName:(NSString *)domainName apiKey:(NSString *)apiKey {
+#ifdef AR_HELPSHIFT_EXISTS
+    HelpshiftProvider *provider = [[HelpshiftProvider alloc] initWithAppID:appID domainName:domainName apiKey:apiKey];
+    _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];    
+#endif
 }
 
 #pragma mark -
 #pragma mark User Setup
 
+// deprecated;
++ (void)identifyUserwithID:(NSString *)userID andEmailAddress:(NSString *)email {
+    [self identifyUserWithID:userID andEmailAddress:email];
+}
 
-+ (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email {
+
++ (void)identifyUserWithID:(NSString *)userID andEmailAddress:(NSString *)email {
     [_sharedAnalytics iterateThroughProviders:^(ARAnalyticalProvider *provider) {
-        [provider identifyUserwithID:id andEmailAddress:email];
+        [provider identifyUserWithID:userID andEmailAddress:email];
     }];
 }
 
@@ -178,14 +213,20 @@ static ARAnalytics *_sharedAnalytics;
 #pragma mark -
 #pragma mark Monitor Navigation Controller
 
++ (void)pageView:(NSString *)pageTitle {
+    if (!pageTitle) return;
+    
+    [_sharedAnalytics iterateThroughProviders:^(ARAnalyticalProvider *provider) {
+        [provider didShowNewPageView:pageTitle];
+    }];
+}
+
 + (void)monitorNavigationViewController:(UINavigationController *)controller {
     controller.delegate = _sharedAnalytics;
 }
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    [_sharedAnalytics iterateThroughProviders:^(ARAnalyticalProvider *provider) {
-        [provider didShowNewViewController:viewController];
-    }];
+    [self.class pageView:viewController.title];
 }
 
 #pragma mark -
@@ -234,13 +275,16 @@ void ARLog (NSString *format, ...) {
     va_list argList;
     va_start(argList, format);
     // Perform format string argument substitution, reinstate %% escapes, then print
-    NSString *parsedFormatString = [[NSString alloc] initWithFormat:format arguments:argList];
-    parsedFormatString = [parsedFormatString stringByReplacingOccurrencesOfString:@"%%" withString:@"%%%%"];
-    printf("ARLog : %s\n", parsedFormatString.UTF8String);
 
-    [_sharedAnalytics iterateThroughProviders:^(ARAnalyticalProvider *provider) {
-        [provider remoteLog:parsedFormatString];
-    }];
+    @autoreleasepool {
+      NSString *parsedFormatString = [[NSString alloc] initWithFormat:format arguments:argList];
+      parsedFormatString = [parsedFormatString stringByReplacingOccurrencesOfString:@"%%" withString:@"%%%%"];
+      printf("ARLog : %s\n", parsedFormatString.UTF8String);
+
+      [_sharedAnalytics iterateThroughProviders:^(ARAnalyticalProvider *provider) {
+          [provider remoteLog:parsedFormatString];
+      }];
+    }
 
     va_end(argList);
 }
@@ -250,8 +294,13 @@ const NSString *ARCountlyHost = @"ARCountlyHost";
 const NSString *ARTestFlightAppToken = @"ARTestFlight";
 const NSString *ARCrashlyticsAPIKey = @"ARCrashlytics";
 const NSString *ARMixpanelToken = @"ARMixpanel";
+const NSString *ARMixpanelHost = @"ARMixpanelHost";
 const NSString *ARFlurryAPIKey = @"ARFlurry";
+const NSString *ARBugsnagAPIKey = @"ARBugsnag";
 const NSString *ARLocalyticsAppKey = @"ARLocalytics";
 const NSString *ARKISSMetricsAPIKey = @"ARKISSMetrics";
 const NSString *ARCrittercismAppID = @"ARCrittercism";
 const NSString *ARGoogleAnalyticsID = @"ARGoogleAnalytics";
+const NSString *ARHelpshiftAppID = @"ARHelpshiftAppID";
+const NSString *ARHelpshiftDomainName = @"ARHelpshiftDomainName";
+const NSString *ARHelpshiftAPIKey = @"ARHelpshiftAPIKey";

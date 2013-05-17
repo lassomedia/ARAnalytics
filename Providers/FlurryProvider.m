@@ -7,6 +7,8 @@
 //
 
 #import "FlurryProvider.h"
+#import "ARAnalyticsProviders.h"
+#import "Flurry.h"
 
 @implementation FlurryProvider
 #ifdef AR_FLURRY_EXISTS
@@ -15,23 +17,25 @@
     NSAssert([Flurry class], @"Flurry is not included");
     [Flurry startSession:identifier];
 
-    self = [super init];
-    return self;
+    return [super init];
 }
 
-- (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email {
+- (void)identifyUserWithID:(NSString *)userID andEmailAddress:(NSString *)email {
+    if (userID) {
+        [Flurry setUserID:userID];
+    }
+
     if (email) {
         [Flurry setUserID:email];
     }
-    [Flurry setUserID:id];
 }
 
 - (void)event:(NSString *)event withProperties:(NSDictionary *)properties {
     [Flurry logEvent:event withParameters:properties];
 }
 
-- (void)didShowNewViewController:(UIViewController *)controller {
-    [self event:@"Screen view" withProperties:@{ @"screen": controller.title }];
+- (void)didShowNewPageView:(NSString *)pageTitle {
+    [self event:@"Screen view" withProperties:@{ @"screen": pageTitle }];
     [Flurry logPageView];
 }
 

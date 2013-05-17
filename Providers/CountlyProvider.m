@@ -7,6 +7,7 @@
 //
 
 #import "CountlyProvider.h"
+#import "Countly.h"
 
 @implementation CountlyProvider
 
@@ -14,13 +15,9 @@
 #ifdef AR_COUNTLY_EXISTS
     NSAssert([Countly class], @"Countly is not included");
     [[Countly sharedInstance] start:appKey withHost:host];
-
-    self = [super init];
-    return self;
-
-#else
-    return nil;
 #endif
+
+    return [super init];
 }
 
 #ifdef AR_COUNTLY_EXISTS
@@ -30,5 +27,4 @@
 }
 
 #endif
-
 @end

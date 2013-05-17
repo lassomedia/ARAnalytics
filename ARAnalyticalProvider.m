@@ -12,27 +12,23 @@
 @implementation ARAnalyticalProvider
 
 - (id)initWithIdentifier:(NSString *)identifier {
-    self = [super init];
-    return self;
+    return [super init];
 }
 
-/// Set a per user property
-- (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email {}
+- (void)identifyUserWithID:(NSString *)userID andEmailAddress:(NSString *)email {}
 - (void)setUserProperty:(NSString *)property toValue:(NSString *)value {}
 
-/// Submit user events
 - (void)event:(NSString *)event withProperties:(NSDictionary *)properties {}
 - (void)incrementUserProperty:(NSString *)counterName byInt:(NSNumber *)amount {}
 
-/// Monitor Navigation changes as page view
 - (void)monitorNavigationViewController:(UINavigationController *)controller {}
 
 - (void)logTimingEvent:(NSString *)event withInterval:(NSNumber *)interval {
     [self event:event withProperties:@{ @"length": interval }];
 }
 
-- (void)didShowNewViewController:(UIViewController *)controller {
-    [self event:@"Screen view" withProperties:@{ @"screen": controller.title }];
+- (void)didShowNewPageView:(NSString *)pageTitle {
+    [self event:@"Screen view" withProperties:@{ @"screen": pageTitle }];
 }
 
 - (void)remoteLog:(NSString *)parsedString {}

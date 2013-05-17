@@ -26,62 +26,86 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 //  OTHER DEALINGS IN THE SOFTWARE.
 
+/**
+ @class
+ ARAnalytics Main Class.
 
+ @abstract
+ The primary interface for dealing with in app Analytics.
 
-#import <Foundation/Foundation.h>
-#import "ARAnalytics+GeneratedHeader.h"
+ @discussion
+ Use the ARAnalytics class to set up your analytics provider and track events.
 
-extern void ARLog (NSString *format, ...);
+ <pre>
+
+ [ARAnalytics setupWithAnalytics: @{
+    ARCrittercismAppID : @"KEY",
+    ARKISSMetricsAPIKey : @"KEY",
+    ARGoogleAnalyticsID : @"KEY"
+ }];
+
+ </pre>
+
+ For more advanced usage, please see the <a
+ href="https://github.com/orta/ARAnalytics">ARAnalytics Readme</a>.
+ */
 
 @interface ARAnalytics : NSObject <UINavigationControllerDelegate>
 
-// A global analytics API, use the constants at the bottom for keys.
+/// A global setup analytics API, keys are provided at the bottom of the documentation.
 + (void)setupWithAnalytics:(NSDictionary *)analyticsDictionary;
 
-/// Setup methods for each individual analytics type
+/// Setup methods for each individual analytics providers
 + (void)setupTestFlightWithAppToken:(NSString *)token;
 + (void)setupCrashlyticsWithAPIKey:(NSString *)key;
 + (void)setupMixpanelWithToken:(NSString *)token;
++ (void)setupMixpanelWithToken:(NSString *)token andHost:(NSString *)host;
 + (void)setupFlurryWithAPIKey:(NSString *)key;
-+ (void)setupGoogleAnalyticsWithID:(NSString *)id;
++ (void)setupGoogleAnalyticsWithID:(NSString *)identifier;
 + (void)setupLocalyticsWithAppKey:(NSString *)key;
 + (void)setupKISSMetricsWithAPIKey:(NSString *)key;
 + (void)setupCrittercismWithAppID:(NSString *)appID;
 + (void)setupCountlyWithAppKey:(NSString *)key andHost:(NSString *)host;
++ (void)setupBugsnagWithAPIKey:(NSString *)key;
++ (void)setupHelpshiftWithAppID:(NSString *)appID domainName:(NSString *)domainName apiKey:(NSString *)apiKey;
 
 /// Set a per user property
-+ (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email;
-+ (void)setUserProperty:(NSString *)property toValue:(NSString *)value;
++ (void)identifyUserwithID:(NSString *)userID andEmailAddress:(NSString *)email __attribute__((deprecated));
++ (void)identifyUserWithID:(NSString *)userID andEmailAddress:(NSString *)email;
 
-/// Submit user events
++ (void)setUserProperty:(NSString *)property toValue:(NSString *)value;
++ (void)incrementUserProperty:(NSString *)counterName byInt:(int)amount;
+
+/// Submit user events to providers
 + (void)event:(NSString *)event;
 + (void)event:(NSString *)event withProperties:(NSDictionary *)properties;
-+ (void)incrementUserProperty:(NSString*)counterName byInt:(int)amount;
 
 /// Monitor Navigation changes as page view
++ (void)pageView:(NSString *)pageTitle;
 + (void)monitorNavigationViewController:(UINavigationController *)controller;
 
 /// Let ARAnalytics deal with the timing of an event
 + (void)startTimingEvent:(NSString *)event;
 + (void)finishTimingEvent:(NSString *)event;
 
-// Upcoming:
-// Blacklist developers or testers from your main analytics
-//+ (void)setupBlacklistAnalyticsProviders:(NSDictionary *)blacklistAnalyticsDictionary;
-//+ (void)userIDsForBlacklist:(NSArray *)ids;
-//+ (void)userEmailsForBlacklist:(NSArray *)emails;
-
 @end
 
+/// an NSLog-like command that send to providers
+extern void ARLog (NSString *format, ...);
 
-// Provide some keys for the setupWithDictionary
+/// Provide keys for the setupWithDictionary
 extern const NSString *ARCountlyAppKey;
 extern const NSString *ARCountlyHost;
 extern const NSString *ARTestFlightAppToken;
 extern const NSString *ARCrashlyticsAPIKey;
 extern const NSString *ARMixpanelToken;
+extern const NSString *ARMixpanelHost;
 extern const NSString *ARFlurryAPIKey;
 extern const NSString *ARLocalyticsAppKey;
 extern const NSString *ARKISSMetricsAPIKey;
+extern const NSString *ARBugsnagAPIKey;
 extern const NSString *ARCrittercismAppID;
 extern const NSString *ARGoogleAnalyticsID;
+extern const NSString *ARHelpshiftAppID;
+extern const NSString *ARHelpshiftDomainName;
+extern const NSString *ARHelpshiftAPIKey;

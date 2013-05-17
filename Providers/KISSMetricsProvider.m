@@ -7,6 +7,7 @@
 //
 
 #import "KISSMetricsProvider.h"
+#import "KISSMetricsAPI.h"
 
 @implementation KISSMetricsProvider
 #ifdef AR_KISSMETRICS_EXISTS
@@ -15,14 +16,13 @@
     NSAssert([KISSMetricsAPI class], @"KISSMetrics is not included");
     [KISSMetricsAPI sharedAPIWithKey:identifier];
 
-    self = [super init];
-    return self;
+    return [super init];
 }
 
-- (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email {
-    [[KISSMetricsAPI sharedAPI] identify:id];
-    if (email) {
-        [[KISSMetricsAPI sharedAPI] alias:email withIdentity:id];
+- (void)identifyUserWithID:(NSString *)userID andEmailAddress:(NSString *)email {
+    if (email && userID) {
+    	[[KISSMetricsAPI sharedAPI] identify:userID];
+        [[KISSMetricsAPI sharedAPI] alias:email withIdentity:userID];
     }
 }
 

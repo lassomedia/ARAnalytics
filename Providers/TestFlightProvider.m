@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "TestFlightProvider.h"
+#import "TestFlight.h"
+#import "BPXLUUIDHandler.h"
 
 @implementation TestFlightProvider
 #ifdef AR_TESTFLIGHT_EXISTS
@@ -20,8 +22,7 @@
 #endif
     [TestFlight takeOff:identifier];
 
-    self = [super init];
-    return self;
+    return [super init];
 }
 
 + (NSString *)uniqueID {
@@ -30,11 +31,14 @@
         return [[[UIDevice currentDevice] identifierForVendor] UUIDString];
     }
 
-    return [[UIDevice currentDevice] uniqueIdentifier];
+    return [BPXLUUIDHandler UUID];
 }
 
-- (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email {
-    [TestFlight addCustomEnvironmentInformation:@"id" forKey:id];
+- (void)identifyUserWithID:(NSString *)userID andEmailAddress:(NSString *)email {
+    if (userID) {
+        [TestFlight addCustomEnvironmentInformation:@"id" forKey:userID];
+    }
+    
     if (email) {
         [TestFlight addCustomEnvironmentInformation:@"email" forKey:email];
     }
@@ -49,7 +53,7 @@
 }
 
 - (void)remoteLog:(NSString *)parsedString {
-    TFLog(parsedString);
+    TFLogPreFormatted(parsedString);
 }
 
 #endif

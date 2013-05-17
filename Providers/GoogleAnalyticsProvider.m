@@ -6,20 +6,21 @@
 //  Copyright (c) 2013 Orta Therox. All rights reserved.
 //
 
-#import "GoogleProvider.h"
+#import "GoogleAnalyticsProvider.h"
+#import "ARAnalyticsProviders.h"
+#import "GAI.h"
 
-@implementation GoogleProvider
+@implementation GoogleAnalyticsProvider
 #ifdef AR_GOOGLEANALYTICS_EXISTS
 
 - (id)initWithIdentifier:(NSString *)identifier {
     NSAssert([GAI class], @"Google Analytics SDK is not included");
     [[GAI sharedInstance] trackerWithTrackingId:identifier];
 
-    self = [super init];
-    return self;
+    return [super init];
 }
 
-- (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email {
+- (void)identifyUserWithID:(NSString *)userID andEmailAddress:(NSString *)email {
     // Not allowed in GA
     // https://developers.google.com/analytics/devguides/collection/ios/v2/customdimsmets#pii
 
@@ -31,18 +32,18 @@
 }
 
 - (void)event:(NSString *)event withProperties:(NSDictionary *)properties {
-    [[[GAI sharedInstance] defaultTracker] trackEventWithCategory:nil withAction:event withLabel:nil withValue:nil];
+    [[[GAI sharedInstance] defaultTracker] sendEventWithCategory:nil withAction:event withLabel:nil withValue:nil];
 }
 
-- (void)didShowNewViewController:(UIViewController *)controller {
-    [self event:@"Screen view" withProperties:@{ @"screen": controller.title }];
-    [[[GAI sharedInstance] defaultTracker] trackView:controller.title];
+- (void)didShowNewPageView:(NSString *)pageTitle {
+    [self event:@"Screen view" withProperties:@{ @"screen": pageTitle }];
+    [[[GAI sharedInstance] defaultTracker] trackView:pageTitle];
 }
 
 - (void)logTimingEvent:(NSString *)event withInterval:(NSNumber *)interval {
     [self event:event withProperties:@{ @"length": interval }];
 
-    [[[GAI sharedInstance] defaultTracker] trackTimingWithCategory:nil withValue:interval.doubleValue withName:event withLabel:nil];
+    [[[GAI sharedInstance] defaultTracker] sendTimingWithCategory:nil withValue:interval.doubleValue withName:event withLabel:nil];
 }
 
 #endif

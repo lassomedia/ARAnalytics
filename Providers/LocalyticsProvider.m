@@ -7,6 +7,7 @@
 //
 
 #import "LocalyticsProvider.h"
+#import "LocalyticsSession.h"
 
 @implementation LocalyticsProvider
 #ifdef AR_LOCALYTICS_EXISTS
@@ -15,12 +16,14 @@
     NSAssert([LocalyticsSession class], @"Localytics is not included");
     [[LocalyticsSession sharedLocalyticsSession] startSession:identifier];
 
-    self = [super init];
-    return self;
+    return [super init];
 }
 
-- (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email {
-    [[LocalyticsSession sharedLocalyticsSession] setCustomerName:id];
+- (void)identifyUserWithID:(NSString *)userID andEmailAddress:(NSString *)email {
+    if (userID) {
+        [[LocalyticsSession sharedLocalyticsSession] setCustomerName:userID];
+    }
+    
     if (email) {
         [[LocalyticsSession sharedLocalyticsSession] setCustomerEmail:email];
     }
@@ -35,9 +38,9 @@
     [[LocalyticsSession sharedLocalyticsSession] tagEvent:event attributes:properties];
 }
 
-- (void)didShowNewViewController:(UIViewController *)controller {
+- (void)didShowNewPageView:(NSString *)pageTitle {
     // This is for enterprise only...
-    [[LocalyticsSession sharedLocalyticsSession] tagScreen:controller.title];
+    [[LocalyticsSession sharedLocalyticsSession] tagScreen:pageTitle];
 }
 
 #endif

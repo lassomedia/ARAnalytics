@@ -1,9 +1,11 @@
-ARAnalytics
+ARAnalytics v1.3
 ================
 
 ARAnalytics is to iOS what [Analytical](https://github.com/jkrall/analytical) is to ruby, or [Analytics.js](http://segmentio.github.com/analytics.js/) is to javascript.
 
-ARAnalytics is a Cocoapods only library, which provides a sane API for tracking events and some simple user data. We currently support: TestFlight, Mixpanel, Localytics, Flurry, Google Analytics, KISSMetrics, Crittercism and Crashlytics. It does this by using CocoaPods subspecs to let you decide which libraries you'd like to use.
+ARAnalytics is a Cocoapods only library, which provides a sane API for tracking events and some simple user data. We currently support: TestFlight, Mixpanel, Localytics, Flurry, Google Analytics, KISSMetrics, Countly, Crittercism, Bugsnag, Helpshift and Crashlytics. It does this by using subspecs from CocoaPods 0.17+ to let you decide which libraries you'd like to use.
+
+[Changelog](https://github.com/orta/ARAnalytics/blob/master/CHANGELOG.md)
 
 Installation
 =====
@@ -40,7 +42,6 @@ Submit a console log that is stored online, for crash reporting this provides a 
 extern void ARLog (NSString *format, ...);
 ```
 
-
 Event Tracking
 ----
 ``` objc
@@ -57,15 +58,16 @@ User Properties
 ----
 ``` objc
 /// Set a per user property
-+ (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email;
++ (void)identifyUserWithID:(NSString *)userID andEmailAddress:(NSString *)email;
 + (void)setUserProperty:(NSString *)property toValue:(NSString *)value;
 + (void)incrementUserProperty:(NSString*)counterName byInt:(int)amount;
 ```
 
-Navigation Stack Tracking
+Page View Tracking
 ----
 ``` objc
 /// Monitor Navigation changes as page view
++ (void)pageView:(NSString *)pageTitle;
 + (void)monitorNavigationViewController:(UINavigationController *)controller;
 ```
 
@@ -76,5 +78,4 @@ See [Contributing](https://github.com/orta/ARAnalytics/blob/master/CONTRIBUTING.
 Upcoming Features / Things people can help with
 =====
 
-* Support for [HockeyKit](https://github.com/TheRealKerni/HockeyKit),  [QuincyKiy](https://github.com/TheRealKerni/QuincyKit) and [HockeyApp](http://hockeyapp.net). Or any other analytical provider not mentioned.
-* Support for having blacklisted email / id that mean using a different key is used by the app.
+* Support for [HockeyKit](https://github.com/TheRealKerni/HockeyKit),  [QuincyKit](https://github.com/TheRealKerni/QuincyKit) and [HockeyApp](http://hockeyapp.net). Or any other analytical provider not mentioned.

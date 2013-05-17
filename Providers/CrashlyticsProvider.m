@@ -16,12 +16,14 @@
     NSAssert([[Crashlytics class] respondsToSelector:@selector(version)], @"Crashlytics library not installed correctly.");
     [Crashlytics startWithAPIKey:identifier];
 
-    self = [super init];
-    return self;
+    return [super init];
 }
 
-- (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email {
-    [Crashlytics setUserIdentifier:id];
+- (void)identifyUserWithID:(NSString *)userID andEmailAddress:(NSString *)email {
+    if (userID) {
+        [Crashlytics setUserIdentifier:userID];
+    }
+
     if (email) {
         [Crashlytics setUserName:email];
     }

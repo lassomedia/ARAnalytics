@@ -7,6 +7,7 @@
 //
 
 #import "CrittercismProvider.h"
+#import "Crittercism.h"
 
 @implementation CrittercismProvider
 #ifdef AR_CRITTERCISM_EXISTS
@@ -15,12 +16,14 @@
     NSAssert([Crittercism class], @"Crittercism is not included");
     [Crittercism enableWithAppID:identifier];
 
-    self = [super init];
-    return self;
+    return [super init];
 }
 
-- (void)identifyUserwithID:(NSString *)id andEmailAddress:(NSString *)email {
-    [Crittercism setUsername:id];
+- (void)identifyUserWithID:(NSString *)userID andEmailAddress:(NSString *)email {
+    if (userID) {
+        [Crittercism setUsername:userID];
+    }
+
     if (email) {
         [Crittercism setEmail:email];
     }
@@ -34,8 +37,8 @@
     [Crittercism leaveBreadcrumb:event];
 }
 
-- (void)didShowNewViewController:(UIViewController *)controller {
-    NSString *string = [NSString stringWithFormat:@"Opened %@", controller.title];
+- (void)didShowNewPageView:(NSString *)pageTitle {
+    NSString *string = [NSString stringWithFormat:@"Opened %@", pageTitle];
     [Crittercism leaveBreadcrumb: string];
 }
 
