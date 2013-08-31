@@ -1,5 +1,27 @@
 #ARAnalytics
 
+## Version 2.0
+* Support for Google Ananlytics v3 ( thanks @dlackty )
+
+## Version 1.9
+* Support for HockeyApp ( thanks @Daniel1of1 )
+* Workaround for subspecs that create build confilicts ( thanks @Daniel1of1 )
+
+## Version 1.8
+* Support for Amplitude ( thanks @Daniel1of1 )
+
+## Version 1.7
+* Support for NewRelic ( thanks @Daniel1of1 )
+
+## Version 1.6
+* Support for Tapstream ( thanks @Daniel1of1 )
+
+## Version 1.5.1
+* Support for sending NSErrors ( thanks @jk )
+
+## Version 1.5
+* Mac support for KISSmetrics, Countly and Mixpanel.
+
 ## Version 1.3.1
 * Support the new Mixpanel 2.0 API
 

@@ -1,11 +1,12 @@
-ARAnalytics v1.3
+ARAnalytics v2.0
 ================
 
 ARAnalytics is to iOS what [Analytical](https://github.com/jkrall/analytical) is to ruby, or [Analytics.js](http://segmentio.github.com/analytics.js/) is to javascript.
 
-ARAnalytics is a Cocoapods only library, which provides a sane API for tracking events and some simple user data. We currently support: TestFlight, Mixpanel, Localytics, Flurry, Google Analytics, KISSMetrics, Countly, Crittercism, Bugsnag, Helpshift and Crashlytics. It does this by using subspecs from CocoaPods 0.17+ to let you decide which libraries you'd like to use.
+ARAnalytics is a CocoaPods only library, which provides a sane API for tracking events and some simple user data. It currently supports for iOS: TestFlight, Mixpanel, Localytics, Flurry, Google Analytics v3, KISSMetrics, Tapstream, Countly, Crittercism, Bugsnag, Helpshift and Crashlytics. And for OS X: KISSmetrics, Countly and Mixpanel. It does this by using subspecs from CocoaPods 0.17+ to let you decide which libraries you'd like to use.
 
-[Changelog](https://github.com/orta/ARAnalytics/blob/master/CHANGELOG.md)
+
+[Changelog](https://github.com/orta/ARAnalytics/blob/master/CHANGELOG.md)  
 
 Installation
 =====
@@ -52,6 +53,14 @@ Event Tracking
 /// Let ARAnalytics deal with the timing of an event
 + (void)startTimingEvent:(NSString *)event;
 + (void)finishTimingEvent:(NSString *)event;
+```
+
+Error Tracking
+----
+``` objc
+/// Submit errors to providers
++ (void)error:(NSError *)error;
++ (void)error:(NSError *)error withMessage:(NSString *)message;
 ```
 
 User Properties

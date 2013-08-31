@@ -6,6 +6,7 @@
 //  Copyright (c) 2012 Art.sy. All rights reserved.
 //
 
+@class UINavigationController, UIViewController;
 @interface ARAnalyticalProvider : NSObject
 
 /// Init
@@ -18,6 +19,9 @@
 /// Submit user events
 - (void)event:(NSString *)event withProperties:(NSDictionary *)properties;
 - (void)incrementUserProperty:(NSString *)counterName byInt:(NSNumber *)amount;
+
+/// Submit errors
+- (void)error:(NSError *)error withMessage:(NSString *)message;
 
 /// Monitor Navigation changes as page view
 - (void)monitorNavigationViewController:(UINavigationController *)controller;

@@ -17,6 +17,11 @@ static ARAnalytics *_sharedAnalytics;
 @property (strong) NSSet *providers;
 @end
 
+#if !TARGET_OS_IPHONE
+@implementation UIViewController @end
+@implementation UINavigationController @end
+#endif
+
 @implementation ARAnalytics
 
 + (void) initialize {
@@ -70,6 +75,24 @@ static ARAnalytics *_sharedAnalytics;
     if (analyticsDictionary[ARHelpshiftAppID] && analyticsDictionary[ARHelpshiftDomainName] && analyticsDictionary[ARHelpshiftAPIKey]) {
         [self setupHelpshiftWithAppID:analyticsDictionary[ARHelpshiftAppID] domainName:analyticsDictionary[ARHelpshiftDomainName] apiKey:analyticsDictionary[ARHelpshiftAPIKey]];
     }
+    
+    if (analyticsDictionary[ARTapstreamAccountName] && analyticsDictionary[ARTapstreamDeveloperSecret]) {
+        [self setupTapstreamWithAccountName:analyticsDictionary[ARTapstreamAccountName] developerSecret:analyticsDictionary[ARTapstreamDeveloperSecret] config:analyticsDictionary[ARTapstreamConfig]];
+    }
+    
+    if (analyticsDictionary[ARNewRelicAppToken]) {
+        [self setupNewRelicWithAppToken:analyticsDictionary[ARNewRelicAppToken]];
+    }
+    
+    if (analyticsDictionary[ARAmplitudeAPIKey]) {
+        [self setupNewRelicWithAppToken:analyticsDictionary[ARNewRelicAppToken]];
+    }
+
+    if (analyticsDictionary[ARHockeyAppBetaID]) {
+        [self setupHockeyAppWithBetaID:analyticsDictionary[ARHockeyAppBetaID] liveID:analyticsDictionary[ARHockeyAppLiveID]];
+    }
+
+
 
     // Crashlytics / Crittercism should stay at the bottom of this,
     // as they both need to register exceptions, and you'd only use one.
@@ -164,6 +187,48 @@ static ARAnalytics *_sharedAnalytics;
 #endif
 }
 
++ (void)setupTapstreamWithAccountName:(NSString *)accountName developerSecret:(NSString *)developerSecret {
+#ifdef AR_TAPSTREAM_EXISTS
+    TapstreamProvider *provider = [[TapstreamProvider alloc] initWithAccountName:accountName developerSecret:developerSecret];
+    _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
+}
+
++ (void)setupTapstreamWithAccountName:(NSString *)accountName developerSecret:(NSString *)developerSecret config:(TSConfig *)config {
+#ifdef AR_TAPSTREAM_EXISTS
+    TapstreamProvider *provider = [[TapstreamProvider alloc] initWithAccountName:accountName developerSecret:developerSecret config:config];
+    _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
+}
+
++ (void)setupNewRelicWithAppToken:(NSString *)token {
+#ifdef AR_NEWRELIC_EXISTS
+    NewRelicProvider *provider = [[NewRelicProvider alloc] initWithIdentifier:token];
+    _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
+}
+
++ (void)setupAmplitudeWithAPIKey:(NSString *)key {
+#ifdef AR_AMPLITUDE_EXISTS
+     AmplitudeProvider *provider = [[AmplitudeProvider alloc] initWithIdentifier:key];
+    _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
+}
+
++ (void)setupHockeyAppWithBetaID:(NSString *)betaID {
+#ifdef AR_HOCKEYAPP_EXISTS
+    [self setupHockeyAppWithBetaID:betaID liveID:nil];
+#endif
+}
+
++ (void)setupHockeyAppWithBetaID:(NSString *)betaID liveID:(NSString *)liveID {
+#ifdef AR_HOCKEYAPP_EXISTS
+    HockeyAppProvider *provider = [[HockeyAppProvider alloc] initWithBetaIdentifier:betaID liveIdentifier:liveID];
+    _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
+}
+
+
 #pragma mark -
 #pragma mark User Setup
 
@@ -211,6 +276,19 @@ static ARAnalytics *_sharedAnalytics;
 }
 
 #pragma mark -
+#pragma mark Errors
+
++ (void)error:(NSError *)error {
+	[self error:error withMessage:nil];
+}
+
++ (void)error:(NSError *)error withMessage:(NSString *)message {
+	[_sharedAnalytics iterateThroughProviders:^(ARAnalyticalProvider *provider) {
+		[provider error:error withMessage:message];
+	}];
+}
+
+#pragma mark -
 #pragma mark Monitor Navigation Controller
 
 + (void)pageView:(NSString *)pageTitle {
@@ -222,11 +300,15 @@ static ARAnalytics *_sharedAnalytics;
 }
 
 + (void)monitorNavigationViewController:(UINavigationController *)controller {
+#if TARGET_OS_IPHONE
     controller.delegate = _sharedAnalytics;
+#endif
 }
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+#if TARGET_OS_IPHONE
     [self.class pageView:viewController.title];
+#endif
 }
 
 #pragma mark -
@@ -304,3 +386,10 @@ const NSString *ARGoogleAnalyticsID = @"ARGoogleAnalytics";
 const NSString *ARHelpshiftAppID = @"ARHelpshiftAppID";
 const NSString *ARHelpshiftDomainName = @"ARHelpshiftDomainName";
 const NSString *ARHelpshiftAPIKey = @"ARHelpshiftAPIKey";
+const NSString *ARTapstreamAccountName = @"ARTapstreamAccountName";
+const NSString *ARTapstreamDeveloperSecret = @"ARTapstreamDeveloperSecret";
+const NSString *ARTapstreamConfig = @"ARTapstreamConfig";
+const NSString *ARNewRelicAppToken = @"ARNewRelicAppToken";
+const NSString *ARAmplitudeAPIKey = @"ARAmplitudeAPIKey";
+const NSString *ARHockeyAppLiveID = @"ARHockeyAppLiveID";
+const NSString *ARHockeyAppBetaID = @"ARHockeyAppBetaID";

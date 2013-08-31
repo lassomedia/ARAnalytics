@@ -50,6 +50,16 @@
  href="https://github.com/orta/ARAnalytics">ARAnalytics Readme</a>.
  */
 
+// For OS X support we need to mock up UIVIewController/UINavigationViewController
+
+#if !TARGET_OS_IPHONE
+@interface UIViewController : NSObject @end
+@interface UINavigationController : NSObject @end
+@protocol UINavigationControllerDelegate <NSObject> @end
+#endif
+
+@class TSConfig;
+
 @interface ARAnalytics : NSObject <UINavigationControllerDelegate>
 
 /// A global setup analytics API, keys are provided at the bottom of the documentation.
@@ -68,6 +78,12 @@
 + (void)setupCountlyWithAppKey:(NSString *)key andHost:(NSString *)host;
 + (void)setupBugsnagWithAPIKey:(NSString *)key;
 + (void)setupHelpshiftWithAppID:(NSString *)appID domainName:(NSString *)domainName apiKey:(NSString *)apiKey;
++ (void)setupTapstreamWithAccountName:(NSString *)accountName developerSecret:(NSString *)developerSecret;
++ (void)setupTapstreamWithAccountName:(NSString *)accountName developerSecret:(NSString *)developerSecret config:(TSConfig *)config;
++ (void)setupNewRelicWithAppToken:(NSString *)token;
++ (void)setupAmplitudeWithAPIKey:(NSString *)key;
++ (void)setupHockeyAppWithBetaID:(NSString *)betaID;
++ (void)setupHockeyAppWithBetaID:(NSString *)beta liveID:(NSString *)liveID;
 
 /// Set a per user property
 + (void)identifyUserwithID:(NSString *)userID andEmailAddress:(NSString *)email __attribute__((deprecated));
@@ -80,9 +96,15 @@
 + (void)event:(NSString *)event;
 + (void)event:(NSString *)event withProperties:(NSDictionary *)properties;
 
+/// Submit errors to providers
++ (void)error:(NSError *)error;
++ (void)error:(NSError *)error withMessage:(NSString *)message;
+
 /// Monitor Navigation changes as page view
 + (void)pageView:(NSString *)pageTitle;
+#if TARGET_OS_IPHONE
 + (void)monitorNavigationViewController:(UINavigationController *)controller;
+#endif
 
 /// Let ARAnalytics deal with the timing of an event
 + (void)startTimingEvent:(NSString *)event;
@@ -109,3 +131,11 @@ extern const NSString *ARGoogleAnalyticsID;
 extern const NSString *ARHelpshiftAppID;
 extern const NSString *ARHelpshiftDomainName;
 extern const NSString *ARHelpshiftAPIKey;
+extern const NSString *ARTapstreamAccountName;
+extern const NSString *ARTapstreamDeveloperSecret;
+extern const NSString *ARTapstreamConfig;
+extern const NSString *ARNewRelicAppToken;
+extern const NSString *ARAmplitudeAPIKey;
+extern const NSString *ARHockeyAppBetaID;
+extern const NSString *ARHockeyAppLiveID;
+

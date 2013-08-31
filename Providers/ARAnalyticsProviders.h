@@ -50,3 +50,19 @@
 #ifdef AR_HELPSHIFT_EXISTS
 #import "HelpshiftProvider.h"
 #endif
+
+#ifdef AR_TAPSTREAM_EXISTS
+#import "TapstreamProvider.h"
+#endif
+
+#ifdef AR_NEWRELIC_EXISTS
+#import "NewRelicProvider.h"
+#endif
+
+#ifdef AR_AMPLITUDE_EXISTS
+#import "AmplitudeProvider.h"
+#endif
+
+#ifdef AR_HOCKEYAPP_EXISTS
+#import "HockeyAppProvider.h"
+#endif
