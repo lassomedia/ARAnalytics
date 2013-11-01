@@ -66,3 +66,11 @@
 #ifdef AR_HOCKEYAPP_EXISTS
 #import "HockeyAppProvider.h"
 #endif
+
+#ifdef AR_PARSEANALYTICS_EXISTS
+#import "ParseAnalyticsProvider.h"
+#endif
+
+#ifdef AR_HEAPANALYTICS_EXISTS
+#import "HeapAnalyticsProvider.h"
+#endif

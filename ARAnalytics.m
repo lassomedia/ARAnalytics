@@ -85,13 +85,20 @@ static ARAnalytics *_sharedAnalytics;
     }
     
     if (analyticsDictionary[ARAmplitudeAPIKey]) {
-        [self setupNewRelicWithAppToken:analyticsDictionary[ARNewRelicAppToken]];
+        [self setupAmplitudeWithAPIKey:analyticsDictionary[ARAmplitudeAPIKey]];
     }
 
     if (analyticsDictionary[ARHockeyAppBetaID]) {
         [self setupHockeyAppWithBetaID:analyticsDictionary[ARHockeyAppBetaID] liveID:analyticsDictionary[ARHockeyAppLiveID]];
     }
+    
+    if (analyticsDictionary[ARParseApplicationID] && analyticsDictionary[ARParseClientKey]) {
+        [self setupParseAnalyticsWithApplicationID:analyticsDictionary[ARParseApplicationID] clientKey:analyticsDictionary[ARParseClientKey]];
+    }
 
+    if (analyticsDictionary[ARHeapAppID]) {
+        [self setupHeapAnalyticsWithApplicationID:analyticsDictionary[ARHeapAppID]];
+    }
 
 
     // Crashlytics / Crittercism should stay at the bottom of this,
@@ -227,6 +234,22 @@ static ARAnalytics *_sharedAnalytics;
     _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
 #endif
 }
+
++(void)setupParseAnalyticsWithApplicationID:(NSString *)appID clientKey:(NSString *)clientKey {
+#ifdef AR_PARSEANALYTICS_EXISTS
+    ParseAnalyticsProvider *provider = [[ParseAnalyticsProvider alloc] initWithApplicationID:appID clientKey:clientKey];
+    _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+
+#endif
+}
+
++ (void)setupHeapAnalyticsWithApplicationID:(NSString *)appID {
+#ifdef AR_HEAPANALYTICS_EXISTS
+    HeapAnalyticsProvider *provider = [[HeapAnalyticsProvider alloc] initWithIdentifier:appID];
+    _sharedAnalytics.providers = [_sharedAnalytics.providers setByAddingObject:provider];
+#endif
+}
+
 
 
 #pragma mark -
@@ -393,3 +416,6 @@ const NSString *ARNewRelicAppToken = @"ARNewRelicAppToken";
 const NSString *ARAmplitudeAPIKey = @"ARAmplitudeAPIKey";
 const NSString *ARHockeyAppLiveID = @"ARHockeyAppLiveID";
 const NSString *ARHockeyAppBetaID = @"ARHockeyAppBetaID";
+const NSString *ARParseApplicationID = @"ARParseApplicationID";
+const NSString *ARParseClientKey = @"ARParseClientKey";
+const NSString *ARHeapAppID = @"ARHeapAppID";
